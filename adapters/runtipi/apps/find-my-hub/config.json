@@ -1,0 +1,23 @@
+{
+  "name": "Find My Hub",
+  "port": 8125,
+  "uid": 1000,
+  "gid": 1000,
+  "available": true,
+  "exposable": true,
+  "dynamic_config": true,
+  "id": "find-my-hub",
+  "tipi_version": 1,
+  "version": "1.0.0",
+  "categories": ["automation", "utilities"],
+  "description": "Self-hosted multi-user hub for Apple Find My and Google Find Hub compatible trackers.",
+  "short_desc": "Apple and Google tracker dashboard",
+  "author": "mattbox03",
+  "source": "https://github.com/mattbox03/Find_My_Dual_Tracking_Frontend",
+  "website": "https://github.com/mattbox03/Find_My_Dual_Tracking_Frontend",
+  "form_fields": [],
+  "supported_architectures": ["arm64", "amd64"],
+  "created_at": 1784239200000,
+  "updated_at": 1784239200000,
+  "min_tipi_version": "4.8.0"
+}

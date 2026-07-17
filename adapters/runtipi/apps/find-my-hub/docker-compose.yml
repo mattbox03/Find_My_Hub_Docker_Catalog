@@ -1,0 +1,67 @@
+services:
+  web:
+    image: ghcr.io/mattbox03/find-my-web:edge
+    restart: unless-stopped
+    environment:
+      ENDPOINT_URL: http://apple-provider:6176
+      APPLE_SETUP_TOKEN: ${APPLE_SETUP_TOKEN:-}
+      GOOGLE_URL: http://google-provider:5500
+      GOOGLE_TOKEN: ${GOOGLE_TOKEN:-}
+      WEB_DIR: /web
+      DATA_DIR: /data
+      DAYS: "21"
+      RETENTION_DAYS: "21"
+      REFRESH_INTERVAL: "1800"
+    volumes:
+      - ${APP_DATA_DIR}/data/web:/data
+    networks:
+      - tipi_main_network
+    x-runtipi:
+      is_main: true
+      internal_port: 8000
+    depends_on:
+      - apple-provider
+      - google-provider
+
+  anisette:
+    image: dadoum/anisette-v3-server:latest
+    restart: unless-stopped
+    volumes:
+      - ${APP_DATA_DIR}/data/anisette:/home/Alcoholic/.config/anisette-v3
+    networks:
+      - tipi_main_network
+
+  apple-provider:
+    image: ghcr.io/mattbox03/find-my-apple-provider:edge
+    restart: unless-stopped
+    environment:
+      APPLE_SETUP_PORT: "6177"
+      APPLE_SETUP_TOKEN: ${APPLE_SETUP_TOKEN:-}
+    volumes:
+      - ${APP_DATA_DIR}/data/apple:/app/endpoint/data
+    networks:
+      - tipi_main_network
+    depends_on:
+      - anisette
+
+  google-provider:
+    image: ghcr.io/mattbox03/find-my-google-provider:edge
+    restart: unless-stopped
+    environment:
+      AUTH_TOKEN: ${GOOGLE_TOKEN:-}
+      HOST: 0.0.0.0
+      PORT: "5500"
+      GOOGLE_SETUP_PORT: "5501"
+      GOOGLE_SECRETS_FILE: /app/Auth/secrets.json
+    volumes:
+      - ${APP_DATA_DIR}/data/google-auth:/app/Auth
+      - ${APP_DATA_DIR}/data/google-keys:/app/KeyBackup
+    networks:
+      - tipi_main_network
+
+networks:
+  tipi_main_network:
+    external: true
+
+x-runtipi:
+  schema_version: 2

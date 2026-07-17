@@ -1,4 +1,4 @@
-name: Validate ZimaOS App Store
+name: Validate Docker App Catalog
 
 on:
   push:
@@ -23,15 +23,25 @@ jobs:
               "featured-apps.json",
               "recommend-list.json",
               "supported-languages.json",
+              "portainer/templates.json",
+              "adapters/runtipi/apps/find-my-hub/config.json",
           ):
               json.loads(Path(name).read_text(encoding="utf-8"))
               print(f"{name}: OK")
           PY
 
-      - name: Validate application Compose file
-        run: docker compose -f Apps/FindMyHub/docker-compose.yml config --quiet
+      - name: Validate Compose manifests
+        env:
+          APP_DATA_DIR: /tmp/find-my-hub
+        run: |
+          docker compose -f compose.yaml config --quiet
+          docker compose -f Apps/FindMyHub/docker-compose.yml config --quiet
+          docker compose -f adapters/umbrel/find-my-hub/docker-compose.yml config --quiet
+          docker compose -f adapters/runtipi/apps/find-my-hub/docker-compose.yml config --quiet
 
       - name: Verify public multi-architecture images
+        id: public-images
+        continue-on-error: true
         run: |
           set -eu
           for image in \
@@ -41,3 +51,10 @@ jobs:
           do
             docker manifest inspect "$image" >/dev/null
           done
+
+      - name: Report private container images
+        if: steps.public-images.outcome == 'failure'
+        run: |
+          echo "::warning::The catalog manifests are valid, but one or more GHCR images are not anonymously accessible. One-click installs require public packages."
+          echo "### Container image warning" >> "$GITHUB_STEP_SUMMARY"
+          echo "The manifests passed validation, but one or more GHCR images are private. Make all three find-my-* packages public before distributing the catalog to users." >> "$GITHUB_STEP_SUMMARY"

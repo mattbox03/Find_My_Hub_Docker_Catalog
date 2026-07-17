@@ -1,0 +1,81 @@
+name: find-my-hub
+
+services:
+  web:
+    image: ghcr.io/mattbox03/find-my-web:edge
+    restart: unless-stopped
+    ports:
+      - "${FINDMY_WEB_PORT:-8125}:8000"
+    environment:
+      ENDPOINT_URL: http://apple-provider:6176
+      APPLE_SETUP_TOKEN: ${APPLE_SETUP_TOKEN:-}
+      GOOGLE_URL: http://google-provider:5500
+      GOOGLE_TOKEN: ${GOOGLE_TOKEN:-}
+      WEB_DIR: /web
+      DATA_DIR: /data
+      DAYS: ${RETENTION_DAYS:-21}
+      RETENTION_DAYS: ${RETENTION_DAYS:-21}
+      REFRESH_INTERVAL: ${REFRESH_INTERVAL:-1800}
+    volumes:
+      - web-data:/data
+    depends_on:
+      apple-provider:
+        condition: service_healthy
+      google-provider:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/healthz', timeout=3)"]
+      interval: 30s
+      timeout: 5s
+      start_period: 20s
+      retries: 3
+
+  anisette:
+    image: dadoum/anisette-v3-server:latest
+    restart: unless-stopped
+    volumes:
+      - anisette-data:/home/Alcoholic/.config/anisette-v3
+
+  apple-provider:
+    image: ghcr.io/mattbox03/find-my-apple-provider:edge
+    restart: unless-stopped
+    environment:
+      APPLE_SETUP_PORT: "6177"
+      APPLE_SETUP_TOKEN: ${APPLE_SETUP_TOKEN:-}
+    volumes:
+      - apple-data:/app/endpoint/data
+    depends_on:
+      - anisette
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:6177/healthz', timeout=3)"]
+      interval: 20s
+      timeout: 5s
+      start_period: 20s
+      retries: 6
+
+  google-provider:
+    image: ghcr.io/mattbox03/find-my-google-provider:edge
+    restart: unless-stopped
+    environment:
+      AUTH_TOKEN: ${GOOGLE_TOKEN:-}
+      HOST: 0.0.0.0
+      PORT: "5500"
+      GOOGLE_SETUP_PORT: "5501"
+      GOOGLE_SECRETS_FILE: /app/Auth/secrets.json
+      PYTHONUNBUFFERED: "1"
+    volumes:
+      - google-auth:/app/Auth
+      - google-keys:/app/KeyBackup
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:5501/healthz', timeout=3)"]
+      interval: 20s
+      timeout: 5s
+      start_period: 20s
+      retries: 6
+
+volumes:
+  web-data:
+  anisette-data:
+  apple-data:
+  google-auth:
+  google-keys:

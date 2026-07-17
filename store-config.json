@@ -1,14 +1,14 @@
 {
   "version": 2,
-  "store_id": "find-my-hub-appstore",
+  "store_id": "find-my-hub-docker-catalog",
   "name": {
-    "en_US": "Find My Hub App Store",
-    "it_IT": "App Store Find My Hub"
+    "en_US": "Find My Hub Docker Catalog",
+    "it_IT": "Catalogo Docker Find My Hub"
   },
   "description": {
-    "en_US": "Official external store for Find My Hub self-hosted tracking tools.",
-    "it_IT": "Store esterno ufficiale per gli strumenti di tracking self-hosted Find My Hub."
+    "en_US": "Multi-platform Docker app catalog for Find My Hub.",
+    "it_IT": "Catalogo di app Docker multipiattaforma per Find My Hub."
   },
   "maintainer": "mattbox03",
-  "url": "https://github.com/mattbox03/Find_My_Hub_ZimaOS_AppStore"
+  "url": "https://github.com/mattbox03/Find_My_Hub_Docker_Catalog"
 }

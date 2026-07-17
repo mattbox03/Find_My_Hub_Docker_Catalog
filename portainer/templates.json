@@ -1,0 +1,22 @@
+{
+  "version": "2",
+  "templates": [
+    {
+      "type": 3,
+      "title": "Find My Hub",
+      "description": "Self-hosted Apple Find My and Google Find Hub tracking dashboard.",
+      "categories": ["Tracking", "IoT"],
+      "platform": "linux",
+      "logo": "https://raw.githubusercontent.com/mattbox03/Find_My_Hub_Docker_Catalog/main/Apps/FindMyHub/icon.svg",
+      "repository": {
+        "url": "https://github.com/mattbox03/Find_My_Hub_Docker_Catalog",
+        "stackfile": "compose.yaml"
+      },
+      "env": [
+        {"name": "FINDMY_WEB_PORT", "label": "Web UI port", "default": "8125"},
+        {"name": "APPLE_SETUP_TOKEN", "label": "Optional Apple provider token", "default": ""},
+        {"name": "GOOGLE_TOKEN", "label": "Optional Google provider token", "default": ""}
+      ]
+    }
+  ]
+}
