@@ -66,8 +66,6 @@ jobs:
           PY
 
       - name: Verify public multi-architecture images
-        id: public-images
-        continue-on-error: true
         run: |
           set -eu
           for image in \
@@ -77,10 +75,3 @@ jobs:
           do
             docker manifest inspect "$image" >/dev/null
           done
-
-      - name: Report private container images
-        if: steps.public-images.outcome == 'failure'
-        run: |
-          echo "::warning::The catalog manifests are valid, but one or more GHCR images are not anonymously accessible. One-click installs require public packages."
-          echo "### Container image warning" >> "$GITHUB_STEP_SUMMARY"
-          echo "The manifests passed validation, but one or more GHCR images are private. Make all three find-my-* packages public before distributing the catalog to users." >> "$GITHUB_STEP_SUMMARY"

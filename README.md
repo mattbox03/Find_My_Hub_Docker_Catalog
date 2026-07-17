@@ -72,11 +72,10 @@ images:
 - `ghcr.io/mattbox03/find-my-apple-provider:edge`
 - `ghcr.io/mattbox03/find-my-google-provider:edge`
 
-The CI validates every JSON and Compose manifest. It reports private images as
-a warning because manifest correctness and package visibility are separate
-concerns. Installation will still fail with `unauthorized` until all three
-packages are public. Changing a GitHub package from private to public is an
-irreversible repository-owner action and is intentionally not automated here.
+All three images are public and expose `linux/amd64` and `linux/arm64`
+manifests. The CI validates every JSON and Compose manifest and performs an
+anonymous manifest request for every image. Loss of public access is a blocking
+validation error because it would break one-click installation.
 
 ## Local validation
 
