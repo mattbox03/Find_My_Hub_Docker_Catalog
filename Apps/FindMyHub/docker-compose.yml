@@ -1,0 +1,152 @@
+name: find-my-hub
+
+services:
+  web:
+    container_name: find-my-hub-web
+    hostname: find-my-hub-web
+    image: ghcr.io/mattbox03/find-my-web:edge
+    restart: unless-stopped
+    ports:
+      - target: 8000
+        published: ${WEBUI_PORT:-8125}
+        protocol: tcp
+    environment:
+      ENDPOINT_URL: http://apple-provider:6176
+      APPLE_SETUP_TOKEN: ${APPLE_SETUP_TOKEN:-}
+      GOOGLE_URL: http://google-provider:5500
+      GOOGLE_TOKEN: ${GOOGLE_TOKEN:-}
+      WEB_DIR: /web
+      DATA_DIR: /data
+      DAYS: "21"
+      RETENTION_DAYS: "21"
+      REFRESH_INTERVAL: "1800"
+    volumes:
+      - /DATA/AppData/find-my-hub/web:/data
+    depends_on:
+      apple-provider:
+        condition: service_healthy
+      google-provider:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/healthz', timeout=3)"]
+      interval: 30s
+      timeout: 5s
+      start_period: 20s
+      retries: 3
+    networks:
+      - findmyhub
+
+  anisette:
+    container_name: find-my-hub-anisette
+    hostname: anisette
+    image: dadoum/anisette-v3-server:latest
+    restart: unless-stopped
+    volumes:
+      - /DATA/AppData/find-my-hub/anisette:/home/Alcoholic/.config/anisette-v3
+    networks:
+      - findmyhub
+
+  apple-provider:
+    container_name: find-my-hub-apple-provider
+    hostname: apple-provider
+    image: ghcr.io/mattbox03/find-my-apple-provider:edge
+    restart: unless-stopped
+    environment:
+      APPLE_SETUP_PORT: "6177"
+      APPLE_SETUP_TOKEN: ${APPLE_SETUP_TOKEN:-}
+    volumes:
+      - /DATA/AppData/find-my-hub/apple:/app/endpoint/data
+    depends_on:
+      - anisette
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:6177/healthz', timeout=3)"]
+      interval: 20s
+      timeout: 5s
+      start_period: 20s
+      retries: 6
+    networks:
+      - findmyhub
+
+  google-provider:
+    container_name: find-my-hub-google-provider
+    hostname: google-provider
+    image: ghcr.io/mattbox03/find-my-google-provider:edge
+    restart: unless-stopped
+    environment:
+      AUTH_TOKEN: ${GOOGLE_TOKEN:-}
+      HOST: 0.0.0.0
+      PORT: "5500"
+      GOOGLE_SETUP_PORT: "5501"
+      GOOGLE_SECRETS_FILE: /app/Auth/secrets.json
+      PYTHONUNBUFFERED: "1"
+    volumes:
+      - /DATA/AppData/find-my-hub/google-auth:/app/Auth
+      - /DATA/AppData/find-my-hub/google-keys:/app/KeyBackup
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:5501/healthz', timeout=3)"]
+      interval: 20s
+      timeout: 5s
+      start_period: 20s
+      retries: 6
+    networks:
+      - findmyhub
+
+networks:
+  findmyhub:
+    driver: bridge
+
+x-casaos:
+  id: io.github.mattbox03.findmyhub
+  architectures:
+    - amd64
+    - arm64
+  main: web
+  store_app_id: findmyhub
+  category: Home
+  author: mattbox03
+  developer: mattbox03
+  icon: https://raw.githubusercontent.com/mattbox03/Find_My_Hub_ZimaOS_AppStore/main/Apps/FindMyHub/icon.svg
+  screenshot_link:
+    - https://github.com/user-attachments/assets/d822bf41-079c-410b-817d-0066992fb5b7
+  thumbnail: https://github.com/user-attachments/assets/d822bf41-079c-410b-817d-0066992fb5b7
+  title:
+    en_US: Find My Hub
+    it_IT: Find My Hub
+  tagline:
+    en_US: One map for Apple Find My and Google Find Hub trackers.
+    it_IT: Una sola mappa per i tracker Apple Find My e Google Find Hub.
+  description:
+    en_US: |
+      A self-hosted multi-user tracking hub for personal Apple Find My and
+      Google Find Hub compatible Bluetooth trackers. It combines both provider
+      histories, device management, MQTT/Home Assistant integration, and
+      firmware tools in one responsive web interface.
+    it_IT: |
+      Hub di tracciamento multiutente self-hosted per tracker Bluetooth
+      personali compatibili con Apple Find My e Google Find Hub. Riunisce
+      cronologia dei due provider, gestione dispositivi, integrazione MQTT/Home
+      Assistant e strumenti firmware in un'unica interfaccia web responsive.
+  tips:
+    before_install:
+      en_US: |
+        This application uses unofficial reverse-engineered integrations and is
+        not affiliated with Apple or Google. Use dedicated accounts and only
+        trackers you own. Apple onboarding requires SMS 2FA. Google onboarding
+        requires a secrets.json generated with the upstream desktop login flow.
+        Optional local API tokens can be configured from the app settings.
+      it_IT: |
+        Questa applicazione usa integrazioni non ufficiali ottenute tramite
+        reverse engineering e non è affiliata con Apple o Google. Usa account
+        dedicati e soltanto tracker di tua proprietà. Apple richiede la 2FA via
+        SMS; Google richiede un secrets.json generato con il login desktop del
+        progetto upstream. I token API locali sono facoltativi e configurabili
+        dalle impostazioni dell'app.
+  port_map: ${WEBUI_PORT:-8125}
+  scheme: http
+  index: /
+  version: "1.0.0"
+  update_at: "2026-07-17"
+  website: https://github.com/mattbox03/Find_My_Dual_Tracking_Frontend
+  repo: https://github.com/mattbox03/Find_My_Dual_Tracking_Frontend
+  support: https://github.com/mattbox03/Find_My_Dual_Tracking_Frontend/issues
+  docs: https://github.com/mattbox03/Find_My_Dual_Tracking_Frontend/tree/Find_My_Web_Frontend

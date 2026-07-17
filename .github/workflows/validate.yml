@@ -1,0 +1,43 @@
+name: Validate ZimaOS App Store
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate JSON metadata
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+
+          for name in (
+              "store-config.json",
+              "category-list.json",
+              "featured-apps.json",
+              "recommend-list.json",
+              "supported-languages.json",
+          ):
+              json.loads(Path(name).read_text(encoding="utf-8"))
+              print(f"{name}: OK")
+          PY
+
+      - name: Validate application Compose file
+        run: docker compose -f Apps/FindMyHub/docker-compose.yml config --quiet
+
+      - name: Verify public multi-architecture images
+        run: |
+          set -eu
+          for image in \
+            ghcr.io/mattbox03/find-my-web:edge \
+            ghcr.io/mattbox03/find-my-apple-provider:edge \
+            ghcr.io/mattbox03/find-my-google-provider:edge
+          do
+            docker manifest inspect "$image" >/dev/null
+          done

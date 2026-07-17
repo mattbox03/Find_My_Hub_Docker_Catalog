@@ -1,0 +1,12 @@
+[
+  {
+    "name": "Home",
+    "font": "home-automation",
+    "description": "Home Apps"
+  },
+  {
+    "name": "Others",
+    "font": "apps",
+    "description": "Other Apps"
+  }
+]
