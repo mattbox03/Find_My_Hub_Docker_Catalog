@@ -69,9 +69,9 @@ jobs:
         run: |
           set -eu
           for image in \
-            ghcr.io/mattbox03/find-my-web:edge \
-            ghcr.io/mattbox03/find-my-apple-provider:edge \
-            ghcr.io/mattbox03/find-my-google-provider:edge
+            ghcr.io/mattbox03/find-my-web:1.0.1 \
+            ghcr.io/mattbox03/find-my-apple-provider:1.0.1 \
+            ghcr.io/mattbox03/find-my-google-provider:1.0.1
           do
             docker manifest inspect "$image" >/dev/null
           done
