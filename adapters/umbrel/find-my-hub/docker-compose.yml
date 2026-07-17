@@ -45,7 +45,7 @@ services:
       HOST: 0.0.0.0
       PORT: "5500"
       GOOGLE_SETUP_PORT: "5501"
-      GOOGLE_SECRETS_FILE: /app/Auth/secrets.json
+      GOOGLE_SECRETS_FILE: /data/Auth/secrets.json
     volumes:
-      - ${APP_DATA_DIR}/data/google-auth:/app/Auth
-      - ${APP_DATA_DIR}/data/google-keys:/app/KeyBackup
+      - ${APP_DATA_DIR}/data/google-auth:/data/Auth
+      - ${APP_DATA_DIR}/data/google-keys:/data/KeyBackup

@@ -77,11 +77,11 @@ services:
       HOST: 0.0.0.0
       PORT: "5500"
       GOOGLE_SETUP_PORT: "5501"
-      GOOGLE_SECRETS_FILE: /app/Auth/secrets.json
+      GOOGLE_SECRETS_FILE: /data/Auth/secrets.json
       PYTHONUNBUFFERED: "1"
     volumes:
-      - /DATA/AppData/find-my-hub/google-auth:/app/Auth
-      - /DATA/AppData/find-my-hub/google-keys:/app/KeyBackup
+      - /DATA/AppData/find-my-hub/google-auth:/data/Auth
+      - /DATA/AppData/find-my-hub/google-keys:/data/KeyBackup
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:5501/healthz', timeout=3)"]
       interval: 20s
