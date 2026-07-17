@@ -144,8 +144,8 @@ x-casaos:
   port_map: "8125"
   scheme: http
   index: /
-  version: "1.0.0"
-  update_at: "2026-07-17"
+  version: "1.0.1"
+  update_at: "2026-07-18"
   website: https://github.com/mattbox03/Find_My_Dual_Tracking_Frontend
   repo: https://github.com/mattbox03/Find_My_Dual_Tracking_Frontend
   support: https://github.com/mattbox03/Find_My_Dual_Tracking_Frontend/issues
