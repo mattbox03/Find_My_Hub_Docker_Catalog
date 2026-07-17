@@ -1,4 +1,4 @@
-name: find-my-hub
+name: findmyhub
 
 services:
   web:
@@ -8,7 +8,7 @@ services:
     restart: unless-stopped
     ports:
       - target: 8000
-        published: ${WEBUI_PORT:-8125}
+        published: "8125"
         protocol: tcp
     environment:
       ENDPOINT_URL: http://apple-provider:6176
@@ -141,7 +141,7 @@ x-casaos:
         SMS; Google richiede un secrets.json generato con il login desktop del
         progetto upstream. I token API locali sono facoltativi e configurabili
         dalle impostazioni dell'app.
-  port_map: ${WEBUI_PORT:-8125}
+  port_map: "8125"
   scheme: http
   index: /
   version: "1.0.0"

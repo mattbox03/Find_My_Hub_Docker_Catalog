@@ -31,7 +31,9 @@ Both provider tokens may remain empty on a trusted local network.
 
 ## CasaOS / ZimaOS
 
-In **App Store -> ADD**, register:
+In **App Store -> ADD**, register the source below. If an older copy was
+already registered, remove it first and then add it again so the app index is
+downloaded afresh:
 
 ```text
 https://github.com/mattbox03/Find_My_Hub_Docker_Catalog/archive/refs/heads/main.zip

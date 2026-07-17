@@ -39,6 +39,32 @@ jobs:
           docker compose -f adapters/umbrel/find-my-hub/docker-compose.yml config --quiet
           docker compose -f adapters/runtipi/apps/find-my-hub/docker-compose.yml config --quiet
 
+      - name: Validate CasaOS and ZimaOS metadata contract
+        run: |
+          docker compose -f Apps/FindMyHub/docker-compose.yml config --format json > /tmp/findmyhub-compose.json
+          python3 - <<'PY'
+          import json
+          import re
+          from pathlib import Path
+
+          compose = json.loads(Path("/tmp/findmyhub-compose.json").read_text())
+          metadata = compose.get("x-casaos", {})
+          assert re.fullmatch(r"[a-z0-9_-]+", compose.get("name", "")), "invalid top-level name"
+          assert re.fullmatch(
+              r"[a-z0-9]+(?:[._-][a-z0-9]+)*(?:\.[a-z0-9]+(?:[._-][a-z0-9]+)*)+",
+              metadata.get("id", ""),
+          ), "invalid reverse-domain x-casaos.id"
+          assert metadata.get("main") in compose.get("services", {}), "x-casaos.main is not a service"
+          assert metadata.get("store_app_id") == compose["name"], "store_app_id must match the catalog key/name"
+          assert isinstance(metadata.get("port_map"), str), "x-casaos.port_map must be a string"
+          assert metadata["port_map"].isdigit(), "x-casaos.port_map must be a literal numeric string"
+          assert metadata.get("title", {}).get("en_US"), "x-casaos.title.en_US is required"
+          for filename in ("featured-apps.json", "recommend-list.json"):
+              entries = json.loads(Path(filename).read_text())
+              assert all(item.get("appid") == compose["name"] for item in entries), f"{filename} contains an unknown appid"
+          print("CasaOS/ZimaOS metadata: OK")
+          PY
+
       - name: Verify public multi-architecture images
         id: public-images
         continue-on-error: true
