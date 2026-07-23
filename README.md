@@ -1,6 +1,6 @@
-# Find My Hub Docker Catalog
+# Find My Hub Docker App Stores
 
-Multi-platform Docker catalog for **Find My Hub**. The repository contains one
+Multi-platform Docker app-store repository for **Find My Hub**. It contains one
 portable Compose stack plus store-specific adapters; it is not tied to ZimaOS.
 
 ## Compatibility
@@ -20,8 +20,8 @@ manifest, all kept in this repository.
 ## Generic Docker installation
 
 ```bash
-git clone https://github.com/mattbox03/Find_My_Hub_Docker_Catalog.git
-cd Find_My_Hub_Docker_Catalog
+git clone https://github.com/mattbox03/Find_My_Hub_Docker_Appstores.git
+cd Find_My_Hub_Docker_Appstores
 docker compose up -d
 ```
 
@@ -36,13 +36,13 @@ already registered, remove it first and then add it again so the app index is
 downloaded afresh:
 
 ```text
-https://github.com/mattbox03/Find_My_Hub_Docker_Catalog/archive/refs/heads/main.zip
+https://github.com/mattbox03/Find_My_Hub_Docker_Appstores/archive/refs/heads/main.zip
 ```
 
 Older CasaOS installations can use:
 
 ```bash
-casaos-cli app-management register app-store https://github.com/mattbox03/Find_My_Hub_Docker_Catalog/archive/refs/heads/main.zip
+casaos-cli app-management register app-store https://github.com/mattbox03/Find_My_Hub_Docker_Appstores/archive/refs/heads/main.zip
 ```
 
 ## Portainer
@@ -50,7 +50,7 @@ casaos-cli app-management register app-store https://github.com/mattbox03/Find_M
 Set **App Templates URL** to:
 
 ```text
-https://raw.githubusercontent.com/mattbox03/Find_My_Hub_Docker_Catalog/main/portainer/templates.json
+https://raw.githubusercontent.com/mattbox03/Find_My_Hub_Docker_Appstores/main/portainer/templates.json
 ```
 
 The template deploys the root `compose.yaml` stack.

@@ -2,7 +2,7 @@
   "version": 2,
   "store_id": "find-my-hub-docker-catalog",
   "name": {
-    "en_US": "Find My Hub Docker Catalog",
+    "en_US": "Find My Hub Docker App Stores",
     "it_IT": "Catalogo Docker Find My Hub"
   },
   "description": {
@@ -10,5 +10,5 @@
     "it_IT": "Catalogo di app Docker multipiattaforma per Find My Hub."
   },
   "maintainer": "mattbox03",
-  "url": "https://github.com/mattbox03/Find_My_Hub_Docker_Catalog"
+  "url": "https://github.com/mattbox03/Find_My_Hub_Docker_Appstores"
 }
